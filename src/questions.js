@@ -10,7 +10,8 @@ const Questions = {
         "Add a department", 
         "Add a role", 
         "Add an employee", 
-        "Edit an eployee role"]
+        "Edit an employee role",
+        "Quit"]
     },
     department:{
         name: "department_name",
@@ -31,7 +32,7 @@ const Questions = {
         dept:{
             name: "role_dept",
             type: "list",
-            choices: departments
+            choices: ["Test 1", "Test 2"]
         }
     },
     employee: {
@@ -49,7 +50,7 @@ const Questions = {
             name: "employee_role",
             type: "list",
             message: "Please choose the employee's role",
-            choices: roles
+            choices: ["Test 1", "Test 2"]
         },
         manager: {
             name: "employee_manager",
@@ -61,13 +62,13 @@ const Questions = {
                 name: "emp_id",
                 type: "list",
                 message: "Please select the employee to update",
-                choices: employees
+                choices: ["Test 1", "Test 2"]
             },
             role: {
                 name: "new_role",
                 type: "list",
                 message: "Please select a role for the employee",
-                choices: roles
+                choices: ["Test 1", "Test 2"]
             }
         }
     }
