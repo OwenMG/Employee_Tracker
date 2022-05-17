@@ -151,7 +151,6 @@ function addEmployee(){
                 choices: employees}
             ])
             .then((answers) =>{
-              console.log(answers);
               const sql =  `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
               VALUES ("${answers.employee_first}", "${answers.employee_last}", ${answers.employee_role}, ${answers.employee_manager})`;
               db.query(sql, (err,result)=>{
@@ -217,7 +216,6 @@ function editEmployee() {
                           choices: employees}
                       ])
                       .then((answers) =>{
-                        console.log(answers);
                         const updEmp = {
                           id: empId,
                           role: answers.employee_role,
