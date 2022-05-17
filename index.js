@@ -1,3 +1,4 @@
+const { restoreDefaultPrompts } = require("inquirer");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const Questions = require("./src/questions");
@@ -18,7 +19,6 @@ function runMenu() {
   inquirer
     .prompt(Questions.menu)
     .then((input) =>{
-      console.log(input);
       if (input.menu_selection === "View all departments"){
         console.log("viewing departments...");
         viewTable("department");
@@ -33,15 +33,15 @@ function runMenu() {
       };
       if (input.menu_selection === "Add a department"){
         console.log("adding a department...");
-        runMenu();
+        addDept();
       };
       if (input.menu_selection === "Add a role"){
         console.log("adding a role...");
-        runMenu();
+        addRole();
       };
       if (input.menu_selection === "Add an employee"){
         console.log("adding an employee...");
-        runMenu();
+        addEmployee();
       };
       if (input.menu_selection === "Edit an employee role"){
         console.log("editing an employees role...");
@@ -63,4 +63,102 @@ function viewTable(table) {
   });
 };
 
+function addRole(){
+  // getting current departments from database
+  db.query(`SELECT * FROM department`, (err, result) =>{
+    if (err){console.error(err)}else{
+      const depts = result.map(({id, dept_name}) => ({name: dept_name, value: id}));
+
+      // directing user to add a department first if there are none
+      if (!depts[0]) {
+        console.log("Please add at least one department first.")
+        addDept();
+      }
+      else{
+        // getting new role info
+        inquirer
+        .prompt([
+          Questions.role.title,
+          Questions.role.salary,
+          {name: "role_dept",
+            type: "list",
+            choices: depts,}
+        ])
+        .then((answers) =>{
+          // inserting new role into database
+          const sql = `INSERT INTO role (title, salary, department_id) VALUES ("${answers.role_title}",${answers.role_salary},${answers.role_dept})`;
+          console.log("query: "+ sql);
+          db.query(sql, (err, result) => {
+            if (err){console.error(err)}
+            else{console.log("Role added successfully.")};
+            runMenu();
+          });
+        });}
+    };
+  });
+  
+};
+
+function addDept(){
+  console.log("adding department...");
+  inquirer
+    .prompt(Questions.department)
+    .then((answer) =>{
+      const sql = `INSERT INTO department (dept_name) VALUES ("${answer.department_name}")`;
+      db.query(sql, (err, result)=>{
+        if (err){console.error(err)}
+        else{console.log("Department added successfully.")};
+        runMenu();
+      });
+    });
+}
+
+function addEmployee(){
+  db.query(`SELECT * FROM role`, (err,result)=>{
+    if(err){console.error(err)}else{
+      console.log(result);
+      const roles = result.map(({id, title})=>({name: title, value: id}));
+      // directing user to add a role first if there are none
+      if(!roles[0]){
+        console.log("Please add at least one role first.");
+        addRole();
+      }
+      else{
+        db.query(`SELECT * FROM employee`, (err,result)=>{
+        if(err){console.error(err)}else{
+         let employees = result.map(({id, first_name, last_name})=>({name:`${first_name} ${last_name}`, value: id}));
+         if (!employees[0]){
+           employees.unshift({name: "*Self*", value: 1});
+         }
+          inquirer
+            .prompt([
+              Questions.employee.firstname,
+              Questions.employee.lastname,
+              {name: "employee_role",
+                type: "list",
+                message: "Please choose the employee's role",
+                choices: roles},
+              {name: "employee_manager",
+                type: "list",
+                message: `Please choose the employee's manager.`,
+                choices: employees}
+            ])
+            .then((answers) =>{
+              console.log(answers);
+              const sql =  `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
+              VALUES ("${answers.employee_first}", "${answers.employee_last}", ${answers.employee_role}, ${answers.employee_manager})`;
+              db.query(sql, (err,result)=>{
+                if(err){console.error(err)}
+                else{console.log("Employee added successfully.")};
+                runMenu();
+              });
+              
+            });
+        };
+      });
+      
+    };}
+      
+  });
+}
 runMenu();

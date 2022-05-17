@@ -28,11 +28,6 @@ const Questions = {
             name: "role_salary",
             type: "input",
             message:"Please enter the salary of the role"
-        },
-        dept:{
-            name: "role_dept",
-            type: "list",
-            choices: ["Test 1", "Test 2"]
         }
     },
     employee: {
@@ -45,17 +40,6 @@ const Questions = {
             name: "employee_last",
             type: "input",
             message: "Please enter the employee's last name"
-        },
-        role: {
-            name: "employee_role",
-            type: "list",
-            message: "Please choose the employee's role",
-            choices: ["Test 1", "Test 2"]
-        },
-        manager: {
-            name: "employee_manager",
-            type: "input",
-            message: "Please enter the employee's manager"
         },
         roleupdate: {
             id: {
