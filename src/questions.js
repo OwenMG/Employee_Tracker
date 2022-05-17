@@ -10,7 +10,8 @@ const Questions = {
         "Add a department", 
         "Add a role", 
         "Add an employee", 
-        "Edit an eployee role"]
+        "Edit an employee",
+        "Quit"]
     },
     department:{
         name: "department_name",
@@ -27,11 +28,6 @@ const Questions = {
             name: "role_salary",
             type: "input",
             message:"Please enter the salary of the role"
-        },
-        dept:{
-            name: "role_dept",
-            type: "list",
-            choices: departments
         }
     },
     employee: {
@@ -44,31 +40,6 @@ const Questions = {
             name: "employee_last",
             type: "input",
             message: "Please enter the employee's last name"
-        },
-        role: {
-            name: "employee_role",
-            type: "list",
-            message: "Please choose the employee's role",
-            choices: roles
-        },
-        manager: {
-            name: "employee_manager",
-            type: "input",
-            message: "Please enter the employee's manager"
-        },
-        roleupdate: {
-            id: {
-                name: "emp_id",
-                type: "list",
-                message: "Please select the employee to update",
-                choices: employees
-            },
-            role: {
-                name: "new_role",
-                type: "list",
-                message: "Please select a role for the employee",
-                choices: roles
-            }
         }
     }
 
