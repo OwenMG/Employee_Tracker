@@ -48,8 +48,16 @@ function runMenu() {
         editEmployee();
       };
       if (input.menu_selection === "Quit"){
-        console.log("quitting...");
-        process.exit();
+        console.log("Thanks for using Employee Tracker!");
+        const sql = `SELECT employee.id, first_name, last_name, title, salary, dept_name, manager_id 
+        FROM employee
+        JOIN role ON employee.role_id=role.id
+        JOIN department ON role.department_id=department.id;`;
+        db.query(sql, (err,result)=> {
+          if(err){console.error(err)}
+          else{console.table(result)};
+          process.exit();
+        });
       };
     })
 };
@@ -116,7 +124,6 @@ function addDept(){
 function addEmployee(){
   db.query(`SELECT * FROM role`, (err,result)=>{
     if(err){console.error(err)}else{
-      console.log(result);
       const roles = result.map(({id, title})=>({name: title, value: id}));
       // directing user to add a role first if there are none
       if(!roles[0]){
@@ -181,12 +188,10 @@ function editEmployee() {
             }
           ])
           .then((choice)=>{
-            console.log(choice);
             const empId = choice.id;
             // pasted from addEmployee, sets role and manager
             db.query(`SELECT * FROM role`, (err,result)=>{
               if(err){console.error(err)}else{
-                console.log(result);
                 const roles = result.map(({id, title})=>({name: title, value: id}));
                 // directing user to add a role first if there are none
                 if(!roles[0]){
