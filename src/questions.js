@@ -10,7 +10,7 @@ const Questions = {
         "Add a department", 
         "Add a role", 
         "Add an employee", 
-        "Edit an employee role",
+        "Edit an employee",
         "Quit"]
     },
     department:{
@@ -40,20 +40,6 @@ const Questions = {
             name: "employee_last",
             type: "input",
             message: "Please enter the employee's last name"
-        },
-        roleupdate: {
-            id: {
-                name: "emp_id",
-                type: "list",
-                message: "Please select the employee to update",
-                choices: ["Test 1", "Test 2"]
-            },
-            role: {
-                name: "new_role",
-                type: "list",
-                message: "Please select a role for the employee",
-                choices: ["Test 1", "Test 2"]
-            }
         }
     }
 

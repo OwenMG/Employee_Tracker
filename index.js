@@ -43,9 +43,9 @@ function runMenu() {
         console.log("adding an employee...");
         addEmployee();
       };
-      if (input.menu_selection === "Edit an employee role"){
-        console.log("editing an employees role...");
-        runMenu();
+      if (input.menu_selection === "Edit an employee"){
+        console.log("editing an employee...");
+        editEmployee();
       };
       if (input.menu_selection === "Quit"){
         console.log("quitting...");
@@ -161,4 +161,80 @@ function addEmployee(){
       
   });
 }
+
+function editEmployee() {
+  // Get all employees and have user pick one to edit
+  db.query(`SELECT * FROM employee`, (err,result)=>{
+    if(err){console.error(err)}else{
+      let employees = result.map(({id, first_name, last_name})=>({name:`${first_name} ${last_name}`, value: id}));
+      if(!employees[0]){
+        console.log("Please add at least one employee first.");
+        addEmployee();
+      }else{
+        inquirer
+          .prompt([
+            {
+              name: "id",
+              type: "list",
+              message: "Please choose an employee to edit",
+              choices: employees
+            }
+          ])
+          .then((choice)=>{
+            console.log(choice);
+            const empId = choice.id;
+            // pasted from addEmployee, sets role and manager
+            db.query(`SELECT * FROM role`, (err,result)=>{
+              if(err){console.error(err)}else{
+                console.log(result);
+                const roles = result.map(({id, title})=>({name: title, value: id}));
+                // directing user to add a role first if there are none
+                if(!roles[0]){
+                  console.log("Please add at least one role first.");
+                  addRole();
+                }
+                else{
+                  db.query(`SELECT * FROM employee`, (err,result)=>{
+                  if(err){console.error(err)}else{
+                   let employees = result.map(({id, first_name, last_name})=>({name:`${first_name} ${last_name}`, value: id}));
+                   if (!employees[0]){
+                     employees.unshift({name: "*Self*", value: 1});
+                   }
+                    inquirer
+                      .prompt([
+                        {name: "employee_role",
+                          type: "list",
+                          message: "Please choose the employee's role",
+                          choices: roles},
+                        {name: "employee_manager",
+                          type: "list",
+                          message: `Please choose the employee's manager.`,
+                          choices: employees}
+                      ])
+                      .then((answers) =>{
+                        console.log(answers);
+                        const updEmp = {
+                          id: empId,
+                          role: answers.employee_role,
+                          manager: answers.employee_manager
+                        }
+                        const sql = `UPDATE employee SET role_id = ${updEmp.role}, manager_id = ${updEmp.manager} WHERE id = ${updEmp.id}`;
+                        db.query(sql, (err,result)=>{
+                          if(err){console.error(err)}
+                          else(console.log("Employee updated successfully."));
+                          runMenu();
+                        })
+                        
+                      });
+                  };
+                });
+                
+              };}
+                
+            });
+          })
+      };
+    };
+  });
+};
 runMenu();
